@@ -15,8 +15,8 @@ inputs:
     description: 'the service account credentials encoded in base64'
     required: true
 outputs:
-  webViewLink:
-    description: 'the webViewLink of the uploaded file'
+  downloadURL:
+    description: 'the downloadURL of the uploaded file'
 
 runs:
   using: docker

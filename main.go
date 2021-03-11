@@ -82,5 +82,7 @@ func main() {
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 	}
-	githubactions.SetOutput("webViewLink", dst.WebViewLink)
+
+	githubactions.SetOutput("downloadURL",
+		fmt.Sprintf("https://drive.google.com/uc?id=%s&export=download", dst.Id))
 }
