@@ -27,6 +27,12 @@ func main() {
 		githubactions.Fatalf("missing input 'filename'")
 	}
 
+	// get target argument from action input
+	target := githubactions.GetInput("target")
+	if target == "" {
+		githubactions.Fatalf("missing input 'target'")
+	}
+
 	// get folderId argument from action input
 	folderId := githubactions.GetInput("folderId")
 	if folderId == "" {
@@ -68,13 +74,13 @@ func main() {
 	}
 
 	f := &drive.File{
-		Name:    file.Name(),
+		Name:    target,
 		Parents: []string{folderId},
 	}
 
-	_, err = svc.Files.Create(f).Media(file).Do()
+	dst, err := svc.Files.Create(f).Media(file).Do()
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 	}
-
+	githubactions.SetOutput("webViewLink", dst.WebViewLink)
 }

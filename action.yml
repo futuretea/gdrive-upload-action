@@ -5,12 +5,18 @@ inputs:
   filename:
     description: 'the name of the file you want to upload'
     required: true
+  target:
+    description: 'the name of the target file'
+    required: true
   folderId:
     description: 'the Id of the parent folder you want to upload the file in'
     required: true
   credentials:
     description: 'the service account credentials encoded in base64'
     required: true
+outputs:
+  webViewLink:
+    description: 'the webViewLink of the uploaded file'
 
 runs:
   using: docker
