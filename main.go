@@ -18,10 +18,10 @@ import (
 )
 
 const (
-	scope = "https://www.googleapis.com/auth/drive.file"
-	filenameInput = "filename"
-	nameInput = "name"
-	folderIdInput = "folderId"
+	scope            = "https://www.googleapis.com/auth/drive.file"
+	filenameInput    = "filename"
+	nameInput        = "name"
+	folderIdInput    = "folderId"
 	credentialsInput = "credentials"
 )
 
@@ -89,11 +89,13 @@ func main() {
 		Parents: []string{folderId},
 	}
 
-	_, err = svc.Files.Create(f).Media(file).Do()
+	dst, err := svc.Files.Create(f).Media(file).Do()
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 	}
 
+	githubactions.SetOutput("downloadURL",
+		fmt.Sprintf("https://drive.google.com/uc?id=%s&export=download", dst.Id))
 }
 
 func missingInput(inputName string) {
