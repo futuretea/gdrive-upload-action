@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/sethvargo/go-githubactions"
@@ -23,6 +24,7 @@ const (
 	nameInput        = "name"
 	folderIdInput    = "folderId"
 	credentialsInput = "credentials"
+	overwriteInput   = "overwrite"
 )
 
 func main() {
@@ -89,6 +91,26 @@ func main() {
 		Parents: []string{folderId},
 	}
 
+	if overwrite := githubactions.GetInput(overwriteInput); overwrite != "" {
+		overwriteFlag, err := strconv.ParseBool(overwrite)
+		if err != nil {
+			errorInput(overwriteInput, err)
+		}
+		if overwriteFlag {
+			r, err := svc.Files.List().Do()
+			if err != nil {
+				githubactions.Fatalf("list files failed with error: %v", err)
+			}
+			for _, i := range r.Files {
+				if filename == i.Name {
+					if err := svc.Files.Delete(i.Id).Do(); err != nil {
+						githubactions.Fatalf("delete file: %+v failed with error: %v", i.Id, err)
+					}
+				}
+			}
+		}
+	}
+
 	dst, err := svc.Files.Create(f).Media(file).Do()
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
@@ -100,4 +122,8 @@ func main() {
 
 func missingInput(inputName string) {
 	githubactions.Fatalf(fmt.Sprintf("missing input '%v'", inputName))
+}
+
+func errorInput(inputName string, err error) {
+	githubactions.Fatalf(fmt.Sprintf("error input '%v': %s", inputName, err))
 }
